@@ -234,7 +234,7 @@
             activePool = shuffle(masterData[mode]);
 
             let screen = document.getElementById('start-screen');
-            if (screen) screen.remove();
+            if (screen) screen.style.display = 'none';
 
             let title = 'BLANKO';
             if (mode === 'schweiz') title = 'SCHWEIZ';
@@ -247,7 +247,6 @@
                 map = L.map('map', { zoomControl: false }).setView([20, 0], 2);
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
                 
-                // Zuverlässiger Standard-Kartendienst für GitHub Pages
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '&copy; OpenStreetMap contributors'
@@ -301,81 +300,4 @@
                     let marker = L.marker([lat, 0], {
                         icon: L.divIcon({
                             className: 'grid-label',
-                            html: `<span style="color: #d4af37; font-size: 10px; font-family: sans-serif; background: rgba(5,6,8,0.7); padding: 1px 3px; border-radius: 2px;">${labelTxt}</span>`
-                        })
-                    });
-                    gridGroup.addLayer(marker);
-                }
-            }
-            for (let lng = -180; lng <= 180; lng += 10) {
-                let weight = (lng % 30 === 0) ? 1.5 : 0.8;
-                let opacity = (lng % 30 === 0) ? 0.8 : 0.4;
-                let line = L.polyline([[-85, lng], [85, lng]], {color: '#d4af37', weight: weight, opacity: opacity, dashArray: '3, 3'});
-                gridGroup.addLayer(line);
-
-                if (lng !== 0 && lng % 30 === 0) {
-                    let labelTxt = Math.abs(lng) + '° ' + (lng > 0 ? 'E' : 'W');
-                    let marker = L.marker([0, lng], {
-                        icon: L.divIcon({
-                            className: 'grid-label',
-                            html: `<span style="color: #d4af37; font-size: 10px; font-family: sans-serif; background: rgba(5,6,8,0.7); padding: 1px 3px; border-radius: 2px;">${labelTxt}</span>`
-                        })
-                    });
-                    gridGroup.addLayer(marker);
-                }
-            }
-            gridGroup.addTo(map);
-        }
-
-        function nextRound() {
-            if (round > maxRounds || activePool.length === 0) {
-                alert('Spiel beendet! Gesamtergebnis: ' + score + ' Punkte');
-                location.reload();
-                return;
-            }
-            document.getElementById('current-round').innerText = round + '/' + maxRounds;
-            if (userMarker) { map.removeLayer(userMarker); userMarker = null; }
-            if (targetMarker) { map.removeLayer(targetMarker); targetMarker = null; }
-            if (lineObj) { map.removeLayer(lineObj); lineObj = null; }
-            selLat = null; selLng = null;
-            document.getElementById('action-container').classList.remove('visible');
-
-            target = activePool.pop();
-
-            if (mode === 'koordinaten_einfach' || mode === 'koordinaten_profi') {
-                let la = Math.abs(target.lat).toFixed(2) + (target.lat >= 0 ? '° N' : '° S');
-                let lo = Math.abs(target.lng).toFixed(2) + (target.lng >= 0 ? '° E' : '° W');
-                document.getElementById('target-title').innerText = la + ', ' + lo;
-                document.getElementById('target-subtitle').innerText = mode === 'koordinaten_einfach' ? 'Nutze das Koordinatennetz. Pin setzen.' : 'Expertinnen-Modus: Reine Karte ohne Linien.';
-            } else {
-                document.getElementById('target-title').innerText = target.name;
-                document.getElementById('target-subtitle').innerText = 'Finde den Ort auf der Karte.';
-            }
-            active = true;
-        }
-
-        function confirmPin() {
-            if (selLat === null || selLng === null) return;
-            active = false;
-
-            let tLatLng = L.latLng(target.lat, target.lng);
-            let uLatLng = L.latLng(selLat, selLng);
-            let dist = Math.round(tLatLng.distanceTo(uLatLng) / 1000);
-            let pts = Math.max(0, 1000 - dist * 2);
-            score += pts;
-            document.getElementById('total-score').innerText = score;
-
-            targetMarker = L.circleMarker(tLatLng, { radius: 8, color: '#fff', fillColor: '#f85149', fillOpacity: 1, weight: 2 }).addTo(map);
-            lineObj = L.polyline([uLatLng, tLatLng], { color: '#9ba1a6', weight: 2, dashArray: '4, 4' }).addTo(map);
-
-            let displayName = target.name || (Math.abs(target.lat).toFixed(2) + '°, ' + Math.abs(target.lng).toFixed(2) + '°');
-            document.getElementById('target-title').innerText = displayName + ' (' + dist + ' km daneben)';
-            document.getElementById('target-subtitle').innerText = '+' + pts + ' Punkte. Nächste Runde...';
-            document.getElementById('action-container').classList.remove('visible');
-
-            round++;
-            setTimeout(nextRound, 4000);
-        }
-    </script>
-</body>
-</html>
+                            html: `<span style="color: #d
